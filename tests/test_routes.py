@@ -136,4 +136,40 @@ class TestAccountService(TestCase):
     def test_get_account_not_found(self):
         """It should not Read an Account that is not found"""
         resp = self.client.get(f"{BASE_URL}/0")
-        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)        
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+    
+    def test_update_account(self):
+        """It should Update an existing Account"""
+        account = self._create_accounts(1)[0]
+        updated_data = {
+            "name": account.name + " Updated",
+            "email": account.email,
+            "address": "New Address 42",
+            "phone_number": account.phone_number,
+            "date_joined": str(account.date_joined),
+        }
+        response = self.client.put(
+            f"{BASE_URL}/{account.id}",
+            json=updated_data,
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(data["name"], updated_data["name"])
+        self.assertEqual(data["address"], updated_data["address"])
+
+    def test_update_account_not_found(self):
+        """It should not Update an Account that is not found"""
+        body = {
+            "name": "Ghost",
+            "email": "ghost@example.com",
+            "address": "Nowhere",
+            "phone_number": "000000",
+            "date_joined": "2020-01-01",
+        }
+        response = self.client.put(
+            f"{BASE_URL}/0",
+            json=body,
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)    
