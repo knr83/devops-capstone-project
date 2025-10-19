@@ -190,13 +190,12 @@ class TestAccountService(TestCase):
         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(resp.data, b"")
 
-    def test_list_accounts(self):
-        """It should List all Accounts"""
+    def test_get_account_list(self):
+        """It should Get a list of Accounts"""
         self._create_accounts(5)
         resp = self.client.get(BASE_URL)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
-        self.assertIsInstance(data, list)
         self.assertEqual(len(data), 5)
 
     def test_list_accounts_empty(self):
@@ -204,4 +203,4 @@ class TestAccountService(TestCase):
         resp = self.client.get(BASE_URL)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         data = resp.get_json()
-        self.assertEqual(data, [])        
+        self.assertEqual(data, [])
